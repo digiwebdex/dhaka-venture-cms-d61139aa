@@ -1,0 +1,56 @@
+services:
+  primeskyint-postgres:
+    image: postgres:16-alpine
+    container_name: primeskyint-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: primeskyint_db
+      POSTGRES_USER: primeskyint_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/primeskyint/data/postgres:/var/lib/postgresql/data
+    networks:
+      - primeskyint
+
+  primeskyint-api:
+    build:
+      context: ./backend
+    container_name: primeskyint-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3101
+      SERVICE_NAME: primeskyint-api
+      DATABASE_URL: postgresql://primeskyint_user:${POSTGRES_PASSWORD}@primeskyint-postgres:5432/primeskyint_db
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASS: ${ADMIN_PASS}
+      CORS_ORIGIN: https://primeskyint.com,https://www.primeskyint.com
+      UPLOAD_DIR: /app/uploads
+      PUBLIC_UPLOAD_URL: https://api.primeskyint.com/uploads
+      LOG_DIR: /app/logs
+    volumes:
+      - /srv/primeskyint/data/uploads:/app/uploads
+      - /srv/primeskyint/data/logs:/app/logs
+    depends_on:
+      - primeskyint-postgres
+    expose:
+      - "3101"
+    networks:
+      - primeskyint
+
+  primeskyint-frontend:
+    build:
+      context: ./frontend
+    container_name: primeskyint-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: https://api.primeskyint.com
+    expose:
+      - "80"
+    networks:
+      - primeskyint
+
+networks:
+  primeskyint:
+    name: primeskyint
