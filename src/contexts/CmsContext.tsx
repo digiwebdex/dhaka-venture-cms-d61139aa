@@ -184,7 +184,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
             missingKeys.push({ key: keys[i], value: defaults[i] });
             return;
           }
-          let value: unknown = apiValue;
+          let value: unknown = sanitize(apiValue, defaults[i]);
           // Backfill packages: merge stored entries with defaults so old DB rows
           // automatically get gallery / videos / detail-table fields, AND
           // append any new default packages that aren't in the DB yet.
