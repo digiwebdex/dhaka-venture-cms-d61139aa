@@ -1,0 +1,22 @@
+# secrets
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# dependencies/builds
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+
+# runtime data
+data/
+backups/
+*.log
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
