@@ -56,10 +56,20 @@ interface CmsContextType {
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
 // localStorage acts as offline cache + initial paint before API resolves
+function sanitize<T>(value: unknown, fallback: T): T {
+  if (value === null || value === undefined) return fallback;
+  if (Array.isArray(fallback)) return (Array.isArray(value) ? value : fallback) as T;
+  if (typeof fallback === "object") {
+    if (typeof value !== "object" || Array.isArray(value)) return fallback;
+    return { ...(fallback as object), ...(value as object) } as T;
+  }
+  return value as T;
+}
 function loadCache<T>(key: string, fallback: T): T {
   try {
     const data = typeof window !== "undefined" ? localStorage.getItem(key) : null;
-    return data ? (JSON.parse(data) as T) : fallback;
+    if (!data) return fallback;
+    return sanitize(JSON.parse(data), fallback);
   } catch {
     return fallback;
   }
@@ -174,7 +184,7 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
             missingKeys.push({ key: keys[i], value: defaults[i] });
             return;
           }
-          let value: unknown = apiValue;
+          let value: unknown = sanitize(apiValue, defaults[i]);
           // Backfill packages: merge stored entries with defaults so old DB rows
           // automatically get gallery / videos / detail-table fields, AND
           // append any new default packages that aren't in the DB yet.

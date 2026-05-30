@@ -31,7 +31,7 @@ const ContactPage = () => {
             {[
               { icon: MapPin, label: t.contact.address, value: lang === "bn" ? settings.addressBn : settings.address },
               { icon: Phone, label: t.contact.phone, value: settings.phone, href: `tel:${settings.phone}` },
-              { icon: MessageCircle, label: t.contact.whatsapp, value: settings.whatsapp, href: `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}` },
+              { icon: MessageCircle, label: t.contact.whatsapp, value: settings.whatsapp, href: `https://wa.me/${(settings.whatsapp || "").replace(/[^0-9]/g, "")}` },
               { icon: Mail, label: "Email", value: settings.email, href: `mailto:${settings.email}` },
             ].map((item, i) => (
               <Card key={i}>
