@@ -1,10 +1,12 @@
 import { useCms } from "@/contexts/CmsContext";
+import { defaultSettings } from "@/data/defaultData";
 import { MessageCircle, ArrowUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const WhatsAppButton = () => {
   const { settings } = useCms();
-  const waNumber = settings.whatsapp.replace(/[^0-9]/g, "");
+  const rawPhone = settings?.whatsapp || defaultSettings.whatsapp || "";
+  const waNumber = rawPhone.replace(/[^0-9]/g, "");
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
