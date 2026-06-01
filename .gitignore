@@ -12,8 +12,8 @@ build/
 .vite/
 
 # runtime data
-data/
-backups/
+/data/
+/backups/
 *.log
 
 # OS/editor
