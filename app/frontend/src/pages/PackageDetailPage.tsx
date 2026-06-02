@@ -12,7 +12,14 @@ import BookingFormDialog from "@/components/BookingFormDialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const toEmbed = (url: string) => {
-  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+  if (!url) return url;
+  // Already an embed URL
+  if (/youtube\.com\/embed\//.test(url)) return url;
+  // Match: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID,
+  // youtube.com/live/ID, m.youtube.com/..., with optional extra query params
+  const yt = url.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/)|youtu\.be\/)([\w-]{11})/,
+  );
   return yt ? `https://www.youtube.com/embed/${yt[1]}` : url;
 };
 

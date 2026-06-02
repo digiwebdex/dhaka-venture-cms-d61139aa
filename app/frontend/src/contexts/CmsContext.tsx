@@ -56,10 +56,20 @@ interface CmsContextType {
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
 // localStorage acts as offline cache + initial paint before API resolves
+function sanitize<T>(value: unknown, fallback: T): T {
+  if (value === null || value === undefined) return fallback;
+  if (Array.isArray(fallback)) return (Array.isArray(value) ? value : fallback) as T;
+  if (typeof fallback === "object") {
+    if (typeof value !== "object" || Array.isArray(value)) return fallback;
+    return { ...(fallback as object), ...(value as object) } as T;
+  }
+  return value as T;
+}
 function loadCache<T>(key: string, fallback: T): T {
   try {
     const data = typeof window !== "undefined" ? localStorage.getItem(key) : null;
-    return data ? (JSON.parse(data) as T) : fallback;
+    if (!data) return fallback;
+    return sanitize(JSON.parse(data), fallback);
   } catch {
     return fallback;
   }
@@ -156,34 +166,70 @@ export const CmsProvider = ({ children }: { children: ReactNode }) => {
           setHeroSlides, setStats, setFlightRoutes, setUmrahOffer,
           setSeoSettings, setServices, setFooterContent, setContactCta,
         ];
+        const keys = [
+          KEYS.settings, KEYS.pageContent, KEYS.visaRates, KEYS.packages,
+          KEYS.heroSlides, KEYS.stats, KEYS.flightRoutes, KEYS.umrahOffer,
+          KEYS.seoSettings, KEYS.services, KEYS.footerContent, KEYS.contactCta,
+        ];
+        const defaults: unknown[] = [
+          defaultSettings, defaultPageContent, defaultVisaRates, defaultPackages,
+          defaultHeroSlides, defaultStats, defaultFlightRoutes, defaultUmrahOffer,
+          defaultSeoSettings, defaultServices, defaultFooterContent, defaultContactCta,
+        ];
+        const missingKeys: { key: string; value: unknown }[] = [];
         results.forEach((r, i) => {
-          if (r.status !== "fulfilled" || r.value == null) return;
-          let value: unknown = r.value;
+          const apiValue = r.status === "fulfilled" ? r.value : undefined;
+          if (apiValue == null) {
+            // Mark for seeding if admin is logged in
+            missingKeys.push({ key: keys[i], value: defaults[i] });
+            return;
+          }
+          let value: unknown = sanitize(apiValue, defaults[i]);
           // Backfill packages: merge stored entries with defaults so old DB rows
-          // automatically get gallery / videos / detail-table fields.
+          // automatically get gallery / videos / detail-table fields, AND
+          // append any new default packages that aren't in the DB yet.
           if (setters[i] === setPackages && Array.isArray(value)) {
             const defaultsById = new Map(defaultPackages.map((p) => [p.id, p]));
-            // Merge stored entries with defaults: only let stored fields override
-            // when they actually have content. Empty strings / empty arrays fall
-            // back to defaults so info-table rows are never blank.
             const pick = <T,>(stored: T, def: T): T => {
               if (stored === undefined || stored === null) return def;
               if (typeof stored === "string" && stored.trim() === "") return def;
               if (Array.isArray(stored) && stored.length === 0) return def;
               return stored;
             };
-            value = (value as Package[]).map((p) => {
+            const merged = (value as Package[]).map((p) => {
               const def = defaultsById.get(p.id);
               if (!def) return p;
-              const merged: Package = { ...def, ...p };
+              const m: Package = { ...def, ...p };
               (Object.keys(def) as (keyof Package)[]).forEach((k) => {
-                (merged as any)[k] = pick((p as any)[k], (def as any)[k]);
+                (m as any)[k] = pick((p as any)[k], (def as any)[k]);
               });
-              return merged;
+              return m;
             });
+            const existingIds = new Set(merged.map((p) => p.id));
+            const newOnes = defaultPackages.filter((p) => !existingIds.has(p.id));
+            const finalList = [...merged, ...newOnes];
+            value = finalList;
+            // Persist appended packages back to VPS so admin sees them
+            if (newOnes.length > 0 && getAdminToken()) {
+              console.log(`[cms] appending ${newOnes.length} new default packages to VPS…`);
+              cmsPut(KEYS.packages, finalList).catch((e) =>
+                console.warn("[cms] append packages failed:", e.message),
+              );
+            }
           }
           (setters[i] as React.Dispatch<React.SetStateAction<unknown>>)(value);
         });
+
+        // Auto-seed missing keys when admin is logged in, so the admin panel
+        // immediately shows all default sections and they persist on the VPS.
+        if (getAdminToken() && missingKeys.length > 0) {
+          console.log(`[cms] seeding ${missingKeys.length} default sections to VPS…`);
+          await Promise.allSettled(
+            missingKeys.map(({ key, value }) =>
+              cmsPut(key, value).catch((e) => console.warn(`[cms] seed ${key} failed:`, e.message)),
+            ),
+          );
+        }
       } catch (e) {
         console.warn("[cms] hydration failed, using cache/defaults:", e);
       } finally {

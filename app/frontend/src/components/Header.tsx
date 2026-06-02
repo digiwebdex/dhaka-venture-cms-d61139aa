@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import logoImg from "@/assets/logo_prime.png";
 import { useLang } from "@/contexts/LanguageContext";
 import { useCms } from "@/contexts/CmsContext";
-import { defaultSettings } from "@/data/defaultData";
 import { useWhatsAppLink } from "@/hooks/useWhatsAppLink";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Globe, ChevronDown } from "lucide-react";
@@ -12,8 +11,6 @@ const Header = () => {
   const { t, toggleLang, lang } = useLang();
   const whatsappLink = useWhatsAppLink();
   const { settings } = useCms();
-  const safeSettings = settings || defaultSettings;
-  const whatsappNumber = (safeSettings.whatsapp || defaultSettings.whatsapp || "").replace(/[^0-9]/g, "");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const location = useLocation();
@@ -41,18 +38,18 @@ const Header = () => {
       <div className="bg-navy-dark text-primary-foreground text-sm py-2">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <a href={`tel:${safeSettings.phone || defaultSettings.phone}`} className="flex items-center gap-1 hover:text-gold transition-colors">
+            <a href={`tel:${settings.phone}`} className="flex items-center gap-1 hover:text-gold transition-colors">
               <Phone className="w-3 h-3" />
-              <span>{safeSettings.phone || defaultSettings.phone}</span>
+              <span>{settings.phone}</span>
             </a>
             <span className="hidden sm:inline text-muted-foreground">|</span>
             <a
-              href={`https://wa.me/${whatsappNumber}`}
+              href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-1 hover:text-gold transition-colors"
             >
-              WhatsApp: {safeSettings.whatsapp || defaultSettings.whatsapp}
+              WhatsApp: {settings.whatsapp}
             </a>
           </div>
           <Button

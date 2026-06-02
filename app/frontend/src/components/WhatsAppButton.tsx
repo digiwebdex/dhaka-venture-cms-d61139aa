@@ -1,12 +1,10 @@
 import { useCms } from "@/contexts/CmsContext";
-import { defaultSettings } from "@/data/defaultData";
 import { MessageCircle, ArrowUp } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const WhatsAppButton = () => {
   const { settings } = useCms();
-  const rawPhone = settings?.whatsapp || defaultSettings.whatsapp || "";
-  const waNumber = rawPhone.replace(/[^0-9]/g, "");
+  const waNumber = settings.whatsapp.replace(/[^0-9]/g, "");
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
@@ -29,20 +27,20 @@ const WhatsAppButton = () => {
         href={`https://wa.me/${waNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        className="fixed bottom-20 left-4 lg:bottom-6 lg:left-6 z-50 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
         aria-label="WhatsApp"
       >
-        <MessageCircle className="w-7 h-7" />
+        <MessageCircle className="w-6 h-6 lg:w-7 lg:h-7" />
       </a>
 
       {/* Back to Top Button - Right */}
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+          className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
           aria-label="Back to top"
         >
-          <ArrowUp className="w-7 h-7" />
+          <ArrowUp className="w-6 h-6 lg:w-7 lg:h-7" />
         </button>
       )}
     </>

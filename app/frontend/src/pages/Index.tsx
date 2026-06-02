@@ -4,7 +4,6 @@ import ServicesSection from "@/components/home/ServicesSection";
 import UmrahOfferSection from "@/components/home/UmrahOfferSection";
 import FlightOfferSection from "@/components/home/FlightOfferSection";
 import PackagesSection from "@/components/home/PackagesSection";
-import VisaSection from "@/components/home/VisaSection";
 import ContactCTA from "@/components/home/ContactCTA";
 
 const Index = () => {
@@ -16,7 +15,6 @@ const Index = () => {
       <UmrahOfferSection />
       <FlightOfferSection />
       <PackagesSection />
-      <VisaSection />
       <ContactCTA />
     </div>
   );

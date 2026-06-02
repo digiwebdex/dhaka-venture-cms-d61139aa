@@ -35,6 +35,24 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-[90vh] bg-navy-gradient overflow-hidden">
+      {/* Mobile background image */}
+      <div className="absolute inset-0 lg:hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentSlide}
+            src={slide.image}
+            alt={lang === "bn" ? slide.titleBn : slide.titleEn}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/80 via-navy-dark/70 to-navy-dark/90" />
+      </div>
+
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-gold/5 blur-[120px]" />
         <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full bg-sky/5 blur-[120px]" />
