@@ -179,7 +179,7 @@ const Header = () => {
                   </Link>
                 ))}
               </div>
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>
+              <a href="https://primeskyint.net/" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>
                 <Button variant="gold" className="w-full mt-2">
                   {t.nav.bookNow}
                 </Button>
