@@ -10,7 +10,7 @@ export const en = {
     about: "About Us",
     contact: "Contact",
     packages: "Packages & Offers",
-    bookNow: "Book Now",
+    bookNow: "Profile",
     viewDetails: "View Details",
     myBookings: "My Bookings",
     admin: "Admin",
