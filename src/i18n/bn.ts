@@ -10,7 +10,7 @@ export const bn = {
     about: "আমাদের সম্পর্কে",
     contact: "যোগাযোগ",
     packages: "প্যাকেজ ও অফার",
-    bookNow: "বুকিং করুন",
+    bookNow: "প্রোফাইল",
     viewDetails: "বিস্তারিত দেখুন",
     myBookings: "আমার বুকিং",
     admin: "অ্যাডমিন",

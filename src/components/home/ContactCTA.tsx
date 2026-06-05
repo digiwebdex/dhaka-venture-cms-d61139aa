@@ -3,7 +3,7 @@ import { useLang } from "@/contexts/LanguageContext";
 import { useCms } from "@/contexts/CmsContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { MessageCircle, Phone } from "lucide-react";
+import { User, Phone } from "lucide-react";
 
 const ContactCTA = () => {
   const { t, lang } = useLang();
@@ -27,12 +27,12 @@ const ContactCTA = () => {
             {lang === "bn" ? contactCta.subtitleBn : contactCta.subtitleEn}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/contact">
+            <a href="https://primeskyint.net/" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="gold" className="h-14 px-8 rounded-full shadow-xl shadow-gold/20">
-                <MessageCircle className="w-5 h-5 mr-2" />
-                {t.contact.sendMessage}
+                <User className="w-5 h-5 mr-2" />
+                {lang === "bn" ? "প্রোফাইল" : "Profile"}
               </Button>
-            </Link>
+            </a>
             <a href={`https://wa.me/${(settings.whatsapp || "").replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="border-gold/40 text-gold hover:bg-gold/10 h-14 px-8 font-semibold rounded-full">
                 <Phone className="w-5 h-5 mr-2" />
