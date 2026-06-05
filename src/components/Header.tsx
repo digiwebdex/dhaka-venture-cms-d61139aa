@@ -133,7 +133,7 @@ const Header = () => {
                 </Link>
               ))}
 
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+              <a href="https://primeskyint.net/" target="_blank" rel="noopener noreferrer">
                 <Button variant="gold" className="ml-2">
                   {t.nav.bookNow}
                 </Button>
