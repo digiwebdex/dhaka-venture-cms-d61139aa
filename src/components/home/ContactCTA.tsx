@@ -3,7 +3,7 @@ import { useLang } from "@/contexts/LanguageContext";
 import { useCms } from "@/contexts/CmsContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { MessageCircle, Phone } from "lucide-react";
+import { User, Phone } from "lucide-react";
 
 const ContactCTA = () => {
   const { t, lang } = useLang();
